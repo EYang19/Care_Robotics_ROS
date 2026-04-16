@@ -1,0 +1,15 @@
+# Ignore ROS 2 build artifacts and logs
+build/
+install/
+log/
+
+# Ignore VSCode workspace settings
+.vscode/
+
+# Ignore Python compiled cache files
+__pycache__/
+*.pyc
+
+# Ignore temporary swap files
+*.swp
+*~

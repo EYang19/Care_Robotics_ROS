@@ -1,0 +1,16 @@
+{
+  "name": "CareRobotics Dev Env",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "carerobot_dev",
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-iot.vscode-ros",         // Official ROS 2 extension
+        "ms-vscode.cpptools",        // C++ intellisense and debugging support
+        "ms-vscode.cmake-tools",     // CMake build tools
+        "ms-python.python"           // Python intellisense and debugging support
+      ]
+    }
+  }
+}

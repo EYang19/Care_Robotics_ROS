@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  carerobot_dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Mount: Map the current directory on your host to /workspace in the container
+    volumes:
+      - .:/workspace:cached
+    # Privileged: Enable privileged mode for future USB camera or serial debugging
+    privileged: true
+    # Keep the container running continuously
+    command: /bin/sh -c "while sleep 1000; do :; done"
