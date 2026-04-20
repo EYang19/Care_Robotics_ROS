@@ -1,0 +1,39 @@
+ros2_bridge:
+  ros__parameters:
+    # WebSocket Server Configuration
+    websocket_host: "0.0.0.0"
+    websocket_port: 8765
+
+    # ROS Topics - Nav2
+    odom_topic: "/odometry"
+    tf_topic: "/tf"
+
+    # ROS Topics - Sensors
+    consumption_rates_topic: "/sensor/consumption_rates"
+    sku_inventory_topic: "/sensor/sku_inventory"
+    battery_topic: "/sensor/battery"
+    estop_topic: "/emergency_stop"
+
+    # Nav2 Action
+    nav2_action: "navigate_through_poses"
+    nav2_timeout: 300.0  # seconds
+
+    # Update Rates (Hz)
+    robot_state_publish_rate: 10.0  # Publish robot state to clients
+    system_state_publish_rate: 1.0  # Publish full system state with inventory/consumption
+    feedback_poll_rate: 10.0  # Poll Nav2 feedback
+
+    # Frames
+    global_frame: "map"
+    base_frame: "base_link"
+
+    # System State Aggregation and Buffering
+    buffer_inventory_updates: true  # Cache updates between publishes
+    buffer_consumption_updates: true
+
+    # Logging
+    log_level: "INFO"
+
+    # Timeouts
+    sensor_data_timeout: 30.0  # seconds before marking sensor data as stale
+    nav2_action_server_timeout: 5.0  # seconds to wait for action server
