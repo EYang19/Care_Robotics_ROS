@@ -1,0 +1,41 @@
+mock_nav2_server:
+  ros__parameters:
+    # Path to the CareRobotics environment config (graph, inventory, consumption).
+    # Bind-mount the host's configs/ into the container at /care_configs and point this
+    # parameter at the file you want to load.
+    config_path: "/care_configs/ilc_pilot_v1_care_robotics.json"
+
+    # Topics — must match the bridge's subscriptions in bridge_config.yaml.
+    odom_topic: "/odom"
+    battery_topic: "/sensor/battery"
+    sku_inventory_topic: "/sensor/sku_inventory"
+
+    # Action — must match nav2_action in bridge_config.yaml.
+    nav2_action: "navigate_through_poses"
+
+    # Frames.
+    global_frame: "map"
+    base_frame: "base_link"
+
+    # Publish rates (Hz).
+    odom_rate_hz: 10.0
+    battery_rate_hz: 1.0
+    inventory_rate_hz: 1.0
+    feedback_rate_hz: 10.0
+
+    # Robot motion / battery.
+    initial_node_id: 0                  # spawn at this node from the config's nodes list
+    battery_drain_per_sec: 0.0001       # per-real-second drain at rest
+    battery_drain_per_meter: 0.0005     # additional drain per meter travelled
+
+    # Consumption.
+    # items per real-second per SKU at consumption_enabled nodes.
+    # Tune to make stocks visibly drift over a test run without instantly emptying.
+    default_consumption_rate_per_sec: 0.05
+
+    # On goal completion at a recovery node, how many items to deposit per SKU
+    # if the bridge does not include num_items in task_metadata.
+    default_restock_amount: 5
+
+    # Goal-arrival tolerance (metres) — once this close to the final waypoint, succeed.
+    arrival_tolerance_m: 0.15

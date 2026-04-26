@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "mock_nav2_server"
+version = "0.1.0"
+description = "Mock Nav2 + sensor publisher for end-to-end testing of the CareRobotics WebSocket bridge."
+license = { text = "Apache-2.0" }
+maintainer = [{ name = "user", email = "user@example.com" }]
+dependencies = []
+
+[project.scripts]
+mock_nav2_server = "mock_nav2_server.mock_node:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.data-files]
+"share/ament_index/resource_index/packages" = ["resource/mock_nav2_server"]
+"share/mock_nav2_server" = ["package.xml"]
+"share/mock_nav2_server/config" = ["config/default.yaml"]
+"share/mock_nav2_server/launch" = ["launch/mock_and_bridge.launch.py"]
