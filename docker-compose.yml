@@ -7,6 +7,7 @@ services:
     # Mount: Map the current directory on your host to /workspace in the container
     volumes:
       - .:/workspace:cached
+      - /mnt/c/Users/nikhi/ml_projects/CareRobotics/project_code/configs:/care_configs:ro
     # Privileged: Enable privileged mode for future USB camera or serial debugging
     privileged: true
     # Keep the container running continuously

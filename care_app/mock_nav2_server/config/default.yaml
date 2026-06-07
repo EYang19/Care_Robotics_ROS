@@ -30,12 +30,16 @@ mock_nav2_server:
 
     # Consumption.
     # items per real-second per SKU at consumption_enabled nodes.
-    # Tune to make stocks visibly drift over a test run without instantly emptying.
-    default_consumption_rate_per_sec: 0.05
+    # 0.1 = SKUs cross reorder in ~30-50s, several reorder cycles per minute.
+    # 1.0 = smoke-test value, drains shelves in <5s.
+    # 0.05 = closer to realistic warehouse foot-traffic rates.
+    default_consumption_rate_per_sec: 0.1
 
     # On goal completion at a recovery node, how many items to deposit per SKU
     # if the bridge does not include num_items in task_metadata.
-    default_restock_amount: 5
+    # Distributed evenly across the SKUs at the node, so 20 items / 4 SKUs = 5/SKU.
+    # Roughly matches a typical par-level fill from the env's task generator.
+    default_restock_amount: 20
 
     # Goal-arrival tolerance (metres) — once this close to the final waypoint, succeed.
     arrival_tolerance_m: 0.15

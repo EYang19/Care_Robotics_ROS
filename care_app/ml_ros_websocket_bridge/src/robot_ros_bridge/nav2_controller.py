@@ -10,6 +10,7 @@ from action_msgs.msg import GoalStatus
 import rclpy
 from rclpy.node import Node
 from rclpy.action import ActionClient
+import asyncio
 import math
 
 
@@ -147,11 +148,19 @@ class Nav2Controller:
         )
 
         try:
+            loop = asyncio.get_running_loop()
+            asyncio_future = loop.create_future()
+
             send_goal_future = self.action_client.send_goal_async(
                 goal_msg,
                 feedback_callback=self._make_feedback_callback(task_id),
             )
-            goal_handle = await send_goal_future
+
+            send_goal_future.add_done_callback(
+                lambda f: loop.call_soon_threadsafe(asyncio_future.set_result, f.result())
+            )
+
+            goal_handle = await asyncio_future
         except Exception as e:
             self.node.get_logger().error(f"Failed to send goal: {e}")
             raise

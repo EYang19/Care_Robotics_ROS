@@ -148,13 +148,19 @@ async def handle_incoming_message(data: Dict[str, Any]) -> Dict[str, Any]:
 
     try:
         if message_type == "task_command":
-            return await bridge_node.handle_task_command(data)
+            result = await bridge_node.handle_task_command(data)
+            result["message_type"] = "task_response"
+            return result
         elif message_type == "task_cancel":
-            return await bridge_node.handle_task_cancel(data.get("task_id"))
+            result = await bridge_node.handle_task_cancel(data.get("task_id"))
+            result["message_type"] = "task_response"
+            return result
         elif message_type == "emergency_stop":
-            return await bridge_node.handle_emergency_stop()
+            result = await bridge_node.handle_emergency_stop()
+            result["message_type"] = "task_response"
+            return result
         else:
-            return {"status": "error", "message": f"Unknown message type: {message_type}"}
+            return {"message_type": "task_response", "status": "error", "message": f"Unknown message type: {message_type}"}
     except Exception as e:
         logger.error(f"Error handling message: {e}")
         return {"status": "error", "message": str(e)}

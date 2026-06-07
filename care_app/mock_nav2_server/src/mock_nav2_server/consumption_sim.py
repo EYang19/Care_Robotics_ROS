@@ -187,7 +187,11 @@ class ConsumptionSim:
             }
 
             out.append({
-                "location_id": str(nid),
+                # CareRobotics's GraphNode.node_id is "node_<int>" (see
+                # src/environment/graph/config_loader.py). The env looks up
+                # inventories.get(node.node_id), so the location_id we publish
+                # must use the same format or it silently fails to match.
+                "location_id": f"node_{nid}",
                 "location_name": node.name,
                 "sku_inventory": sku_inv,
                 "category_inventory": cat_inv,
