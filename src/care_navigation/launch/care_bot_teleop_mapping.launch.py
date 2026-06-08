@@ -27,22 +27,22 @@ def generate_launch_description():
         os.environ['GAZEBO_PLUGIN_PATH'] = gazebo_plugin_path
 
     workspace_model_path = os.path.dirname(
-        get_package_share_directory('care_bot_description'))
+        get_package_share_directory('care_description'))
     gazebo_model_path = workspace_model_path + ':/opt/ros/humble/share'
     if 'GAZEBO_MODEL_PATH' in os.environ:
         os.environ['GAZEBO_MODEL_PATH'] = gazebo_model_path + ':' + os.environ['GAZEBO_MODEL_PATH']
     else:
         os.environ['GAZEBO_MODEL_PATH'] = gazebo_model_path
 
-    pkg_care_bot_description = get_package_share_directory('care_bot_description')
-    pkg_care_bot_nav2 = get_package_share_directory('care_bot_nav2')
+    pkg_care_description = get_package_share_directory('care_description')
+    pkg_care_navigation = get_package_share_directory('care_navigation')
     pkg_gazebo_ros = get_package_share_directory('gazebo_ros')
     pkg_slam_toolbox = get_package_share_directory('slam_toolbox')
 
-    urdf_file = os.path.join(pkg_care_bot_description, 'urdf', 'CareBot.urdf')
-    world_file = os.path.join(pkg_care_bot_nav2, 'worlds', 'simple_hallway.world')
-    slam_config = os.path.join(pkg_care_bot_nav2, 'config', 'slam_mapping_params.yaml')
-    rviz_config = os.path.join(pkg_care_bot_nav2, 'rviz', 'care_bot_nav.rviz')
+    urdf_file = os.path.join(pkg_care_description, 'urdf', 'CareBot.urdf')
+    world_file = os.path.join(pkg_care_navigation, 'worlds', 'simple_hallway.world')
+    slam_config = os.path.join(pkg_care_navigation, 'config', 'slam_mapping_params.yaml')
+    rviz_config = os.path.join(pkg_care_navigation, 'rviz', 'care_bot_nav.rviz')
 
     with open(urdf_file, 'r') as f:
         robot_description = f.read()
@@ -200,7 +200,7 @@ def generate_launch_description():
         DeclareLaunchArgument('start_map_saver', default_value='true'),
         DeclareLaunchArgument(
             'map_save_path',
-            default_value=os.path.expanduser('~/care_robotics_ws/src/care_bot_nav2/maps/school_room')
+            default_value=os.path.expanduser('~/care_robotics_ws/src/care_navigation/maps/school_room')
         ),
         DeclareLaunchArgument('x_pose', default_value='0.0'),
         DeclareLaunchArgument('y_pose', default_value='0.0'),

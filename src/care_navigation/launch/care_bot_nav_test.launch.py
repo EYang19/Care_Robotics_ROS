@@ -2,7 +2,7 @@
 """
 Single launch file to test CareBot navigation in the school-room world.
 
-By default this uses the saved map from care_bot_nav2/maps/school_room.yaml
+By default this uses the saved map from care_navigation/maps/school_room.yaml
 with map_server + AMCL. Set use_saved_map:=false to fall back to live
 slam_toolbox mapping while navigating.
 """
@@ -27,7 +27,7 @@ def generate_launch_description():
 
     # Include workspace install path so Gazebo can resolve package:// mesh URIs
     workspace_model_path = os.path.join(
-        os.path.dirname(get_package_share_directory('care_bot_description')))
+        os.path.dirname(get_package_share_directory('care_description')))
     gazebo_model_path = workspace_model_path + ':/opt/ros/humble/share'
     if 'GAZEBO_MODEL_PATH' in os.environ:
         os.environ['GAZEBO_MODEL_PATH'] = gazebo_model_path + ':' + os.environ['GAZEBO_MODEL_PATH']
@@ -35,19 +35,18 @@ def generate_launch_description():
         os.environ['GAZEBO_MODEL_PATH'] = gazebo_model_path
 
     # Package directories
-    pkg_care_bot_description = get_package_share_directory('care_bot_description')
-    pkg_care_bot_nav2 = get_package_share_directory('care_bot_nav2')
+    pkg_care_description = get_package_share_directory('care_description')
+    pkg_care_navigation = get_package_share_directory('care_navigation')
     pkg_gazebo_ros = get_package_share_directory('gazebo_ros')
     nav2_bringup_dir = get_package_share_directory('nav2_bringup')
 
     # Paths
-    urdf_file = os.path.join(pkg_care_bot_description, 'urdf', 'CareBot.urdf')
-    world_file = os.path.join(pkg_care_bot_nav2, 'worlds', 'simple_hallway.world')
-    nav2_params_file = os.path.join(pkg_care_bot_nav2, 'config', 'nav2_params.yaml')
-    slam_config = os.path.join(pkg_care_bot_nav2, 'config', 'slam_mapping_params.yaml')
-    default_map_file = os.path.join(pkg_care_bot_nav2, 'maps', 'school_room.yaml')
-    rviz_config_file = os.path.join(pkg_care_bot_nav2, 'rviz', 'care_bot_nav.rviz')
-
+    urdf_file = os.path.join(pkg_care_description, 'urdf', 'CareBot.urdf')
+    world_file = os.path.join(pkg_care_navigation, 'worlds', 'simple_hallway.world')
+    nav2_params_file = os.path.join(pkg_care_navigation, 'config', 'nav2_params.yaml')
+    slam_config = os.path.join(pkg_care_navigation, 'config', 'slam_mapping_params.yaml')
+    default_map_file = os.path.join(pkg_care_navigation, 'maps', 'school_room.yaml')
+    rviz_config_file = os.path.join(pkg_care_navigation, 'rviz', 'care_bot_nav.rviz')
     # Read URDF
     with open(urdf_file, 'r') as f:
         robot_description = f.read()

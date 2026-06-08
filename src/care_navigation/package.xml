@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>care_bot_nav2</name>
+  <name>care_navigation</name>
   <version>0.0.1</version>
   <description>CareBot Nav2 launch and configuration package</description>
   <maintainer email="user@todo.todo">User</maintainer>
@@ -16,7 +16,7 @@
   <depend>gazebo_ros</depend>
   <depend>rviz2</depend>
   <depend>robot_state_publisher</depend>
-  <depend>care_bot_description</depend>
+  <depend>care_description</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

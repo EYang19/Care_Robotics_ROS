@@ -32,7 +32,7 @@ source install/setup.bash
 
 Launch everything in a single command:
 ```bash
-ros2 launch care_bot_nav2 care_bot_nav_test.launch.py
+ros2 launch care_navigation care_bot_nav_test.launch.py
 ```
 
 This will:
@@ -55,7 +55,7 @@ Then you can set navigation goals:
 
 Build a map by driving the robot manually:
 ```bash
-ros2 launch care_bot_nav2 care_bot_teleop_mapping.launch.py
+ros2 launch care_navigation care_bot_teleop_mapping.launch.py
 ```
 
 This starts Gazebo, spawns CareBot, runs `slam_toolbox`, opens RViz, starts keyboard teleop in one terminal, and opens a second terminal for saving the map.
@@ -68,23 +68,23 @@ Drive the robot around the room until:
 
 Then press Enter in the `CareBot Save Map` terminal. By default this saves:
 ```text
-~/care_robotics_ws/src/care_bot_nav2/maps/school_room.yaml
-~/care_robotics_ws/src/care_bot_nav2/maps/school_room.pgm
+~/care_robotics_ws/src/care_navigation/maps/school_room.yaml
+~/care_robotics_ws/src/care_navigation/maps/school_room.pgm
 ```
 
 You can choose a different save path:
 ```bash
-ros2 launch care_bot_nav2 care_bot_teleop_mapping.launch.py map_save_path:=~/care_robotics_ws/src/care_bot_nav2/maps/my_school_map
+ros2 launch care_navigation care_bot_teleop_mapping.launch.py map_save_path:=~/care_robotics_ws/src/care_navigation/maps/my_school_map
 ```
 
 If you do not want the helper terminals:
 ```bash
-ros2 launch care_bot_nav2 care_bot_teleop_mapping.launch.py start_teleop:=false start_map_saver:=false
+ros2 launch care_navigation care_bot_teleop_mapping.launch.py start_teleop:=false start_map_saver:=false
 ```
 
 The old launch name still works as a wrapper:
 ```bash
-ros2 launch care_bot_nav2 care_bot_hallway_teleop_mapping.launch.py
+ros2 launch care_navigation care_bot_hallway_teleop_mapping.launch.py
 ```
 
 ## Troubleshooting

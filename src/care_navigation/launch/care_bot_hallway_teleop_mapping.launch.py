@@ -15,9 +15,9 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 
 def generate_launch_description():
-    pkg_care_bot_nav2 = get_package_share_directory('care_bot_nav2')
+    pkg_care_navigation = get_package_share_directory('care_navigation')
     mapping_launch = os.path.join(
-        pkg_care_bot_nav2,
+        pkg_care_navigation,
         'launch',
         'care_bot_teleop_mapping.launch.py'
     )

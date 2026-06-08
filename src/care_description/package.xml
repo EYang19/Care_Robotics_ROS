@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="3">
-  <name>care_bot_description</name>
+  <name>care_description</name>
   <version>0.0.1</version>
   <description>Simple robot description with Gazebo sensors for Nav2 testing.</description>
   <maintainer email="charviagarwal2002@gmail.com">user</maintainer>
