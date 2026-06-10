@@ -7,7 +7,7 @@ import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy
 from nav_msgs.msg import Odometry
-from std_msgs.msg import Bool, Float32, String
+from std_msgs.msg import Bool, Float32, Int32, String
 import asyncio
 import queue
 import json
@@ -16,6 +16,7 @@ from typing import Dict, Any, Optional, Callable
 from .task_state import TaskState
 from .system_state import SystemState
 from .nav2_controller import Nav2Controller
+from .docking_controller import DockingController
 from .message_converter import (
     odom_to_json,
     task_status_to_json,
@@ -38,7 +39,9 @@ class BridgeNode(Node):
         self.declare_parameter("sku_inventory_topic", "/sensor/sku_inventory")
         self.declare_parameter("battery_topic", "/sensor/battery")
         self.declare_parameter("estop_topic", "/emergency_stop")
+        self.declare_parameter("target_dock_tag_topic", "/target_dock_tag_id")
         self.declare_parameter("nav2_action", "navigate_through_poses")
+        self.declare_parameter("dock_action", "/dock_robot")
         self.declare_parameter("nav2_timeout", 300.0)
         self.declare_parameter("robot_state_publish_rate", 10.0)
         self.declare_parameter("system_state_publish_rate", 1.0)
@@ -58,7 +61,9 @@ class BridgeNode(Node):
             "sku_inventory_topic": self.get_parameter("sku_inventory_topic").value,
             "battery_topic": self.get_parameter("battery_topic").value,
             "estop_topic": self.get_parameter("estop_topic").value,
+            "target_dock_tag_topic": self.get_parameter("target_dock_tag_topic").value,
             "nav2_action": self.get_parameter("nav2_action").value,
+            "dock_action": self.get_parameter("dock_action").value,
             "nav2_timeout": self.get_parameter("nav2_timeout").value,
             "robot_state_publish_rate": self.get_parameter("robot_state_publish_rate").value,
             "system_state_publish_rate": self.get_parameter("system_state_publish_rate").value,
@@ -91,6 +96,35 @@ class BridgeNode(Node):
             feedback_callback=self._on_nav2_feedback,
             result_callback=self._on_nav2_result,
         )
+
+        # Docking controller for AprilTag-backed stations
+        self.docking_controller = DockingController(
+            self,
+            action_name=self.config["dock_action"],
+            action_server_timeout=self.config["nav2_action_server_timeout"],
+        )
+        self.docking_controller.set_callbacks(
+            feedback_callback=self._on_docking_feedback,
+            result_callback=self._on_docking_result,
+        )
+        self.target_dock_tag_pub = self.create_publisher(
+            Int32,
+            self.config["target_dock_tag_topic"],
+            reliable_qos,
+        )
+        self.station_to_dock_id = {
+            "home": "home_station",
+            "home_station": "home_station",
+            "delivery": "delivery_station_1",
+            "delivery_1": "delivery_station_1",
+            "delivery_station_1": "delivery_station_1",
+            "first_delivery": "delivery_station_1",
+            "first_delivery_station": "delivery_station_1",
+        }
+        self.dock_tag_ids = {
+            "home_station": 1,
+            "delivery_station_1": 2,
+        }
 
         # WebSocket command handler callback
         self._websocket_command_handler: Optional[Callable] = None
@@ -218,10 +252,7 @@ class BridgeNode(Node):
             current_task = self.task_state.get_current_task()
             task_id = current_task.get("task_id")
 
-            asyncio.run_coroutine_threadsafe(
-                self.nav2_controller.cancel_goal(),
-                asyncio.get_event_loop(),
-            )
+            self._cancel_active_goals_threadsafe()
             self.task_state.clear_current_task()
 
             robot_state = self.task_state.get_robot_state()
@@ -295,6 +326,89 @@ class BridgeNode(Node):
         self.outgoing_queue.put(("task_status", status))
         self.task_state.clear_current_task()
 
+    def _on_docking_feedback(self, task_id: str, feedback_data: Dict[str, Any]) -> None:
+        status = task_status_to_json(
+            task_id=task_id,
+            status="in_progress",
+            progress_percent=0.0,
+            distance_remaining_m=float(feedback_data.get("distance_remaining", 0.0) or 0.0),
+            time_elapsed_s=0.0,
+        )
+        status["mode"] = "docking"
+        status["dock_id"] = feedback_data.get("dock_id")
+        self.outgoing_queue.put(("task_status", status))
+
+    def _on_docking_result(self, task_id: str, result_data: Dict[str, Any]) -> None:
+        status_str = result_data.get("status", "failed")
+        robot_state = self.task_state.get_robot_state()
+
+        if status_str == "succeeded":
+            status = task_status_to_json(
+                task_id=task_id,
+                status="completed",
+                final_position=robot_state["position"],
+                total_time_s=0.0,
+            )
+        else:
+            status = task_status_to_json(
+                task_id=task_id,
+                status="failed" if status_str != "canceled" else "canceled",
+                error=f"Docking {status_str}",
+                position_at_failure=robot_state["position"],
+            )
+
+        status["mode"] = "docking"
+        status["dock_id"] = result_data.get("dock_id")
+        self.outgoing_queue.put(("task_status", status))
+        self.task_state.clear_current_task()
+
+    def _resolve_dock_id(self, command_json: Dict[str, Any]) -> Optional[str]:
+        requested = (
+            command_json.get("dock_id")
+            or command_json.get("station_id")
+            or command_json.get("destination")
+            or command_json.get("goal")
+        )
+        if not requested:
+            return None
+        return self.station_to_dock_id.get(str(requested), str(requested))
+
+    def _resolve_tag_id(self, command_json: Dict[str, Any], dock_id: str) -> Optional[int]:
+        tag_id = command_json.get("tag_id")
+        if tag_id is not None:
+            return int(tag_id)
+        return self.dock_tag_ids.get(dock_id)
+
+    def _publish_target_tag_id(self, tag_id: Optional[int]) -> None:
+        msg = Int32()
+        msg.data = int(tag_id) if tag_id is not None else -1
+        self.target_dock_tag_pub.publish(msg)
+
+    async def _cancel_active_goals(self) -> None:
+        errors = []
+
+        if self.nav2_controller.has_active_goal():
+            try:
+                await self.nav2_controller.cancel_goal()
+            except Exception as e:
+                errors.append(str(e))
+
+        if self.docking_controller.has_active_goal():
+            try:
+                await self.docking_controller.cancel_goal()
+            except Exception as e:
+                errors.append(str(e))
+
+        if errors:
+            raise Exception("; ".join(errors))
+
+    def _cancel_active_goals_threadsafe(self) -> None:
+        loop = getattr(self, "fastapi_event_loop", None)
+        if loop is None:
+            self.get_logger().warn("FastAPI event loop unavailable; cannot cancel active goals")
+            return
+        asyncio.run_coroutine_threadsafe(self._cancel_active_goals(), loop)
+
     async def handle_task_command(self, task_json: Dict[str, Any]) -> Dict[str, Any]:
         """
         Handle task command from WebSocket
@@ -337,6 +451,74 @@ class BridgeNode(Node):
             self.get_logger().error(f"Error handling task command: {e}")
             return {"status": "error", "message": str(e)}
 
+    async def handle_station_command(self, command_json: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle a request to dock at a named AprilTag station."""
+        try:
+            task_id = command_json.get("task_id")
+            if not task_id:
+                dock_id = self._resolve_dock_id(command_json) or "station"
+                task_id = f"dock_{dock_id}"
+
+            dock_id = self._resolve_dock_id(command_json)
+            if not dock_id:
+                return {
+                    "status": "error",
+                    "message": "Missing dock_id/station_id/destination",
+                }
+            tag_id = self._resolve_tag_id(command_json, dock_id)
+            self._publish_target_tag_id(tag_id)
+
+            metadata = {
+                "mode": "docking",
+                "dock_id": dock_id,
+                "tag_id": tag_id,
+                "request": command_json,
+            }
+            self.task_state.set_current_task(task_id, [], metadata)
+
+            result = await self.docking_controller.send_dock_goal(
+                task_id=task_id,
+                dock_id=dock_id,
+                navigate_to_staging_pose=bool(command_json.get("navigate_to_staging_pose", True)),
+                max_staging_time=float(command_json.get("max_staging_time", 60.0)),
+            )
+
+            status = task_status_to_json(
+                task_id=task_id,
+                status="in_progress",
+                progress_percent=0.0,
+                distance_remaining_m=0.0,
+                time_elapsed_s=0.0,
+            )
+            status["mode"] = "docking"
+            status["dock_id"] = dock_id
+            status["tag_id"] = tag_id
+            self.outgoing_queue.put(("task_status", status))
+
+            return {
+                "status": "accepted",
+                "task_id": task_id,
+                "dock_id": dock_id,
+                "tag_id": tag_id,
+                "goal_id": result.get("goal_id"),
+            }
+        except Exception as e:
+            self.get_logger().error(f"Error handling station command: {e}")
+            self.task_state.clear_current_task()
+            return {"status": "error", "message": str(e)}
+
+    async def handle_go_home(self, command_json: Dict[str, Any]) -> Dict[str, Any]:
+        command = dict(command_json)
+        command["dock_id"] = "home_station"
+        command.setdefault("task_id", "dock_home_station")
+        return await self.handle_station_command(command)
+
+    async def handle_go_delivery_station_1(self, command_json: Dict[str, Any]) -> Dict[str, Any]:
+        command = dict(command_json)
+        command["dock_id"] = "delivery_station_1"
+        command.setdefault("task_id", "dock_delivery_station_1")
+        return await self.handle_station_command(command)
+
     async def handle_emergency_stop(self) -> Dict[str, Any]:
         """Handle emergency stop command received from CareRobotics via WebSocket"""
         try:
@@ -345,7 +527,7 @@ class BridgeNode(Node):
             current_task = self.task_state.get_current_task()
             task_id = current_task.get("task_id")
 
-            await self.nav2_controller.cancel_goal()
+            await self._cancel_active_goals()
             self.task_state.clear_current_task()
 
             robot_state = self.task_state.get_robot_state()
@@ -379,7 +561,7 @@ class BridgeNode(Node):
             if current_task["task_id"] != task_id:
                 return {"status": "error", "message": f"Task {task_id} is not active"}
 
-            await self.nav2_controller.cancel_goal()
+            await self._cancel_active_goals()
             self.task_state.clear_current_task()
 
             # Queue task status

@@ -149,6 +149,12 @@ async def handle_incoming_message(data: Dict[str, Any]) -> Dict[str, Any]:
     try:
         if message_type == "task_command":
             return await bridge_node.handle_task_command(data)
+        elif message_type in ("station_command", "dock_command"):
+            return await bridge_node.handle_station_command(data)
+        elif message_type == "go_home":
+            return await bridge_node.handle_go_home(data)
+        elif message_type in ("go_delivery_station_1", "go_first_delivery"):
+            return await bridge_node.handle_go_delivery_station_1(data)
         elif message_type == "task_cancel":
             return await bridge_node.handle_task_cancel(data.get("task_id"))
         elif message_type == "emergency_stop":

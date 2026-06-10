@@ -1,11 +1,11 @@
-ros2_bridge:
+ml_ros_websocket_bridge:
   ros__parameters:
     # WebSocket Server Configuration
     websocket_host: "0.0.0.0"
     websocket_port: 8765
 
     # ROS Topics - Nav2
-    odom_topic: "/odometry"
+    odom_topic: "/odom"
     tf_topic: "/tf"
 
     # ROS Topics - Sensors
@@ -13,9 +13,11 @@ ros2_bridge:
     sku_inventory_topic: "/sensor/sku_inventory"
     battery_topic: "/sensor/battery"
     estop_topic: "/emergency_stop"
+    target_dock_tag_topic: "/target_dock_tag_id"
 
     # Nav2 Action
     nav2_action: "navigate_through_poses"
+    dock_action: "/dock_robot"
     nav2_timeout: 300.0  # seconds
 
     # Update Rates (Hz)

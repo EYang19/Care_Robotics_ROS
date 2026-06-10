@@ -16,6 +16,17 @@ import math
 class Nav2Controller:
     """Wrapper around Nav2's navigate_through_poses action client"""
 
+    @staticmethod
+    def _yaw_to_quaternion(yaw: float) -> Dict[str, float]:
+        """Convert planar yaw in radians to a quaternion dict."""
+        half_yaw = yaw * 0.5
+        return {
+            "x": 0.0,
+            "y": 0.0,
+            "z": math.sin(half_yaw),
+            "w": math.cos(half_yaw),
+        }
+
     def __init__(
         self,
         node: Node,
@@ -91,11 +102,17 @@ class Nav2Controller:
             pose.pose.position.y = float(wp["y"])
             pose.pose.position.z = float(wp.get("z", 0.0))
 
-            # Orientation (default: identity quaternion)
-            pose.pose.orientation.x = 0.0
-            pose.pose.orientation.y = 0.0
-            pose.pose.orientation.z = 0.0
-            pose.pose.orientation.w = 1.0
+            # Orientation can be supplied as a quaternion or planar yaw.
+            orientation = wp.get("orientation")
+            if orientation is None and "yaw" in wp:
+                orientation = self._yaw_to_quaternion(float(wp["yaw"]))
+            if orientation is None:
+                orientation = {"x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0}
+
+            pose.pose.orientation.x = float(orientation.get("x", 0.0))
+            pose.pose.orientation.y = float(orientation.get("y", 0.0))
+            pose.pose.orientation.z = float(orientation.get("z", 0.0))
+            pose.pose.orientation.w = float(orientation.get("w", 1.0))
 
             poses.append(pose)
 

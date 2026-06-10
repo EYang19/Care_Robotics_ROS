@@ -72,7 +72,7 @@ angular: {x: 0.0,   y: 0.0, z: float}
 
 ## Notes for the Bridge
 
-- Both topics run at up to **20 Hz** (set by `controller_frequency` and `smoothing_frequency` in `care_navigation_params.yaml`)
+- Both topics run at up to **20 Hz** (set by `controller_frequency` and `smoothing_frequency` in `nav2_params.yaml`)
 - `/odom` is published even when the robot is stationary
 - `/cmd_vel` is only published when Nav2 is actively navigating — it goes silent when the robot reaches its goal
 - Timestamps use ROS sim time (`use_sim_time: true`) — wall clock time will differ from `header.stamp`

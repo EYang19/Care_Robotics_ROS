@@ -16,10 +16,10 @@ setup(
     ],
     install_requires=[
         "setuptools",
-        "fastapi>=0.104.0",
-        "uvicorn>=0.24.0",
-        "websockets>=12.0",
-        "pydantic>=2.0.0",
+        "fastapi>=0.63.0",
+        "uvicorn>=0.15.0",
+        "websockets>=9.1",
+        "pydantic>=1.8.2",
     ],
     zip_safe=True,
     maintainer="user",
@@ -29,6 +29,7 @@ setup(
     entry_points={
         "console_scripts": [
             "ml_ros_websocket_bridge = robot_ros_bridge.main:main",
+            "care_bridge_cli = robot_ros_bridge.bridge_cli:main",
         ],
     },
 )
