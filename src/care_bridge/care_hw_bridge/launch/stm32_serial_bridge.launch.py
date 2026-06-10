@@ -16,11 +16,17 @@ def generate_launch_description():
     params_file = LaunchConfiguration('params_file')
     serial_port = LaunchConfiguration('serial_port')
     baudrate = LaunchConfiguration('baudrate')
+    log_tx = LaunchConfiguration('log_tx')
+    log_rx = LaunchConfiguration('log_rx')
+    open_serial = LaunchConfiguration('open_serial')
 
     return LaunchDescription([
         DeclareLaunchArgument('params_file', default_value=default_params),
         DeclareLaunchArgument('serial_port', default_value='/dev/ttyACM0'),
         DeclareLaunchArgument('baudrate', default_value='115200'),
+        DeclareLaunchArgument('log_tx', default_value='false'),
+        DeclareLaunchArgument('log_rx', default_value='false'),
+        DeclareLaunchArgument('open_serial', default_value='true'),
         Node(
             package='care_hw_bridge',
             executable='stm32_serial_bridge',
@@ -31,6 +37,9 @@ def generate_launch_description():
                 {
                     'serial_port': serial_port,
                     'baudrate': baudrate,
+                    'log_tx': log_tx,
+                    'log_rx': log_rx,
+                    'open_serial': open_serial,
                 },
             ],
         ),
