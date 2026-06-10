@@ -4,6 +4,20 @@ This package sends drive-wheel commands from ROS 2 to the STM32 over a serial
 port. The STM32 does not receive ROS messages directly. It receives one plain
 text string per command.
 
+## Recommended RX/TX Node
+
+Use `stm32_serial_bridge` when the same STM32 handles both drive commands and
+ToF sensor data. It opens the serial port once and uses it full-duplex:
+
+```text
+RPi TX -> STM32 RX: V <left_rad_s> <right_rad_s>\n
+RPi RX <- STM32 TX: TOF <sensor_name> <16 distances>\n
+```
+
+Do not run `cmd_vel_serial_bridge` and `care_tof_bridge/tof_serial_bridge` on
+the same `/dev/ttyACM0` at the same time. Only one Linux process should own the
+serial port.
+
 ## ROS Input
 
 The bridge node subscribes to:
@@ -155,7 +169,15 @@ Check the STM32 serial device:
 ls /dev/ttyACM* /dev/ttyUSB*
 ```
 
-Run the bridge:
+Run the combined RX/TX bridge:
+
+```bash
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+ros2 launch care_hw_bridge stm32_serial_bridge.launch.py serial_port:=/dev/ttyACM0
+```
+
+The older drive-only bridge is still available for isolated motor testing:
 
 ```bash
 source /opt/ros/humble/setup.bash
@@ -194,4 +216,24 @@ baudrate: 115200
 protocol: ascii
 send_rate_hz: 20.0
 command_timeout_s: 0.5
+```
+
+The combined RX/TX bridge defaults are in:
+
+```text
+config/stm32_serial_bridge.yaml
+```
+
+It publishes received ToF frames to:
+
+```text
+/tof_cloud/front_left
+/tof_cloud/front_center
+/tof_cloud/front_right
+```
+
+The expected STM32 ToF line is:
+
+```text
+TOF front_center 420 430 440 450 410 415 420 425 390 400 405 410 380 385 390 395\n
 ```

@@ -1,0 +1,21 @@
+stm32_serial_bridge:
+  ros__parameters:
+    serial_port: /dev/ttyACM0
+    baudrate: 115200
+
+    cmd_vel_topic: /cmd_vel
+    wheel_separation_m: 0.458
+    wheel_radius_m: 0.06
+    max_wheel_rad_s: 20.0
+    command_timeout_s: 0.5
+    drive_send_rate_hz: 20.0
+
+    tof_fov_degrees: 65.0
+    tof_range_unit: mm
+    tof_min_range_m: 0.05
+    tof_max_range_m: 2.0
+    serial_poll_rate_hz: 100.0
+
+    log_tx: false
+    log_rx: false
+    open_serial: true

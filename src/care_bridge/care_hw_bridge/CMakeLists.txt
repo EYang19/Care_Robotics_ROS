@@ -9,6 +9,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 
 add_executable(cmd_vel_serial_bridge
   src/cmd_vel_serial_bridge.cpp
@@ -23,7 +24,18 @@ ament_target_dependencies(cmd_vel_serial_bridge
   geometry_msgs
 )
 
-install(TARGETS cmd_vel_serial_bridge
+add_executable(stm32_serial_bridge
+  src/stm32_serial_bridge.cpp
+)
+ament_target_dependencies(stm32_serial_bridge
+  rclcpp
+  geometry_msgs
+  sensor_msgs
+)
+
+install(TARGETS
+  cmd_vel_serial_bridge
+  stm32_serial_bridge
   DESTINATION lib/${PROJECT_NAME}
 )
 
