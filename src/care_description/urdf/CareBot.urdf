@@ -210,7 +210,7 @@
         <collision name="back_left_omniwheel_caster-v2_collision">
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
             <geometry>
-                <sphere radius="0.025" />
+                <sphere radius="0.045" />
             </geometry>
         </collision>
     </link>
@@ -229,7 +229,7 @@
         <collision name="back_right_omniwheel_caster-v1_collision">
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
             <geometry>
-                <sphere radius="0.025" />
+                <sphere radius="0.045" />
             </geometry>
         </collision>
     </link>
@@ -248,7 +248,7 @@
         <collision name="front_right_omniwheel_caster-v2_collision">
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
             <geometry>
-                <sphere radius="0.025" />
+                <sphere radius="0.045" />
             </geometry>
         </collision>
     </link>
@@ -267,7 +267,7 @@
         <collision name="front_left_omniwheel_caster-v1_collision">
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
             <geometry>
-                <sphere radius="0.025" />
+                <sphere radius="0.045" />
             </geometry>
         </collision>
     </link>
