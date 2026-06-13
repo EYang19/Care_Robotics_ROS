@@ -14,15 +14,15 @@ def generate_launch_description():
     """Generate launch description"""
 
     # Find package
-    package_share = FindPackageShare("ml_ros_websocket_bridge")
+    package_share = FindPackageShare("care_ml_websocket_bridge")
     config_dir = PathJoinSubstitution([package_share, "config"])
     config_file = PathJoinSubstitution([config_dir, "bridge_config.yaml"])
 
     # Launch the bridge node
     bridge_node = Node(
-        package="ml_ros_websocket_bridge",
-        executable="ml_ros_websocket_bridge",
-        name="ml_ros_websocket_bridge",
+        package="care_ml_websocket_bridge",
+        executable="care_ml_websocket_bridge",
+        name="care_ml_websocket_bridge",
         output="screen",
         parameters=[config_file],
     )

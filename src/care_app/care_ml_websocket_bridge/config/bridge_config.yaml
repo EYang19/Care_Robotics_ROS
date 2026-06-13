@@ -1,4 +1,4 @@
-ml_ros_websocket_bridge:
+care_ml_websocket_bridge:
   ros__parameters:
     # WebSocket Server Configuration
     websocket_host: "0.0.0.0"

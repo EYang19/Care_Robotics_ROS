@@ -1,7 +1,7 @@
 from glob import glob
 from setuptools import find_packages, setup
 
-package_name = "ml_ros_websocket_bridge"
+package_name = "care_ml_websocket_bridge"
 
 setup(
     name=package_name,
@@ -28,7 +28,7 @@ setup(
     license="Apache-2.0",
     entry_points={
         "console_scripts": [
-            "ml_ros_websocket_bridge = robot_ros_bridge.main:main",
+            "care_ml_websocket_bridge = robot_ros_bridge.main:main",
             "care_bridge_cli = robot_ros_bridge.bridge_cli:main",
         ],
     },

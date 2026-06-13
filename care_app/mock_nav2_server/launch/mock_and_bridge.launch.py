@@ -16,7 +16,7 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     mock_share = FindPackageShare("mock_nav2_server")
-    bridge_share = FindPackageShare("ml_ros_websocket_bridge")
+    bridge_share = FindPackageShare("care_ml_websocket_bridge")
 
     mock_config = PathJoinSubstitution([mock_share, "config", "default.yaml"])
     bridge_config = PathJoinSubstitution([bridge_share, "config", "bridge_config.yaml"])
@@ -40,9 +40,9 @@ def generate_launch_description():
     )
 
     bridge_node = Node(
-        package="ml_ros_websocket_bridge",
-        executable="ml_ros_websocket_bridge",
-        name="ml_ros_websocket_bridge",
+        package="care_ml_websocket_bridge",
+        executable="care_ml_websocket_bridge",
+        name="care_ml_websocket_bridge",
         output="screen",
         emulate_tty=True,
         parameters=[bridge_config],

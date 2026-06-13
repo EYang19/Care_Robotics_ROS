@@ -1,3 +1,19 @@
 {
-    "python-envs.defaultEnvManager": "ms-python.python:system"
+    "python-envs.defaultEnvManager": "ms-python.python:system",
+    "python.autoComplete.extraPaths": [
+        "/workspace/build/mock_nav2_server/src",
+        "/workspace/install/mock_nav2_server/lib/python3.10/site-packages",
+        "/workspace/build/ml_ros_websocket_bridge/src",
+        "/workspace/install/ml_ros_websocket_bridge/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/workspace/build/mock_nav2_server/src",
+        "/workspace/install/mock_nav2_server/lib/python3.10/site-packages",
+        "/workspace/build/ml_ros_websocket_bridge/src",
+        "/workspace/install/ml_ros_websocket_bridge/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ]
 }

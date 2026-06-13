@@ -66,7 +66,7 @@ async def send_command(uri: str, command: dict, listen: bool) -> int:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Send commands to ml_ros_websocket_bridge")
+    parser = argparse.ArgumentParser(description="Send commands to care_ml_websocket_bridge")
     parser.add_argument(
         "--uri",
         default="ws://localhost:8765/ws",
