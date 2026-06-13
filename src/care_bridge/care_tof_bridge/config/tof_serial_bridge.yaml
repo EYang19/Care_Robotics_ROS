@@ -1,0 +1,16 @@
+tof_serial_bridge:
+  ros__parameters:
+    serial_port: /dev/ttyACM0
+    baudrate: 115200
+
+    # The 4x4 ToF sensor has a square 65 degree field of view.
+    fov_degrees: 65.0
+
+    # STM32 range values are expected in millimeters by default.
+    range_unit: mm
+    min_range_m: 0.05
+    max_range_m: 2.0
+
+    poll_rate_hz: 100.0
+    open_serial: true
+    log_lines: false

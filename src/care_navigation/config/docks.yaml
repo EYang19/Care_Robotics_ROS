@@ -1,0 +1,12 @@
+docks:
+  home_station:
+    type: "care_tag_station"
+    frame: map
+    pose: [0.0, 0.0, 0.0]  # x, y, yaw in map - replace with measured home station pose
+    id: 1                  # replace with actual AprilTag ID for home station
+
+  delivery_station_1:
+    type: "care_tag_station"
+    frame: map
+    pose: [2.0, 0.0, 0.0]  # x, y, yaw in map - replace with measured delivery pose
+    id: 2                  # replace with actual AprilTag ID for delivery station 1

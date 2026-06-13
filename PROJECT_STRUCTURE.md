@@ -11,7 +11,7 @@
 
 ### 3. `care_perception/` (Perception Layer)
 - `care_sensor_fusion/`: EKF fusion (processing BNO055 quaternions + Odometry).
-- `care_tof_process/`: Conversion of ToF 8x8 array data into `PointCloud2`.
+- `care_tof_process/`: Conversion of ToF 4x4 array data into `PointCloud2`.
 - `care_vision/`: OV9281 camera driver and AprilTag visual localization/re-localization.
 
 ### 4. `care_localization/` (Mapping & Localization Layer)

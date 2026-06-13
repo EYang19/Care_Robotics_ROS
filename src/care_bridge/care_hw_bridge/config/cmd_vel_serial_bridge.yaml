@@ -1,0 +1,18 @@
+cmd_vel_serial_bridge:
+  ros__parameters:
+    serial_port: /dev/ttyACM0
+    baudrate: 115200
+    cmd_vel_topic: /cmd_vel
+
+    # ascii sends a string: V <left_rad_s> <right_rad_s>\n
+    # hex and binary are also supported for later production use.
+    protocol: ascii
+
+    wheel_separation_m: 0.458
+    wheel_radius_m: 0.06
+    max_wheel_rad_s: 20.0
+    command_timeout_s: 0.5
+    send_rate_hz: 20.0
+
+    open_serial: true
+    log_packets: false
